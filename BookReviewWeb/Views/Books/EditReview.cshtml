@@ -1,0 +1,29 @@
+﻿@model BookReviewWeb.Models.Review
+
+@{
+    ViewData["Title"] = "Edit Review";
+}
+
+<h1>Edit Review</h1>
+
+<form asp-action="EditReview" asp-controller="Books" method="post">
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
+    <input type="hidden" asp-for="BookId" />
+    <div class="form-group">
+        <label asp-for="Rating">Rating:</label>
+        <input asp-for="Rating" class="form-control" min="1" max="5" required />
+    </div>
+  
+    <div class="form-group">
+        <label asp-for="Comment">Comment:</label>
+        <textarea asp-for="Comment" class="form-control" required></textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="Username">UserName</label>
+        <input readonly="readonly" asp-for="Username" value="@User.Identity.Name" class="form-control" min="1" max="5" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Update Review</button>
+   
+    <!-- Validation Summary -->
+    <div asp-validation-summary="All" class="text-danger"></div>
+    </form>

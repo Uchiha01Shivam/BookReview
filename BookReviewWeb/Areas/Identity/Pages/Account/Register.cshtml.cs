@@ -101,6 +101,8 @@ namespace BookReviewWeb.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            [Display(Name = "UserName")]
+            public string UserName { get;set; }
             
             [Display(Name = "Special Key")]
             public string SpecialKey { get; set; }
@@ -131,6 +133,12 @@ namespace BookReviewWeb.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            Input.RolesList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+            {
+                Text = i,
+                Value = i
+            });
             if (ModelState.IsValid)
             {
                 // Check if the provided special key is correct
@@ -139,7 +147,7 @@ namespace BookReviewWeb.Areas.Identity.Pages.Account
                     // Special key is correct; create user with specified role
                     var user = CreateUser();
 
-                    await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                    await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                     await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                     var result = await _userManager.CreateAsync(user, Input.Password);
 
@@ -175,12 +183,12 @@ namespace BookReviewWeb.Areas.Identity.Pages.Account
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
-                else
+                else if(string.IsNullOrEmpty(Input.SpecialKey))
                 {
                     // Special key is incorrect; create user with default role "User"
                     var user = CreateUser();
 
-                    await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                    await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                     await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                     var result = await _userManager.CreateAsync(user, Input.Password);
 
@@ -203,6 +211,13 @@ namespace BookReviewWeb.Areas.Identity.Pages.Account
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
+                }
+
+                else
+                {
+                    // Special key is incorrect; show an error message
+                    ModelState.AddModelError(string.Empty, "Invalid Special Key. Please provide a valid key.");
+                    
                 }
             }
 
