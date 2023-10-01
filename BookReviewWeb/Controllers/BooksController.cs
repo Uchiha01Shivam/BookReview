@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BookReviewWeb.Data;
 using BookReviewWeb.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Net;
 
 namespace BookReviewWeb.Controllers
 {
@@ -259,7 +260,7 @@ namespace BookReviewWeb.Controllers
                     ModelState.AddModelError("", "Concurrency conflict occurred. Please try again.");
                     return View(review);
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = review.BookId });
             }
 
             // If ModelState is not valid, redisplay the form with validation errors
@@ -314,7 +315,8 @@ namespace BookReviewWeb.Controllers
             }
 
             // Redirect back to the book details page
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Details), new { id = review.BookId });
+
         }
 
 
