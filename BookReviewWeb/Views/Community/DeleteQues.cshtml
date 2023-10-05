@@ -1,0 +1,21 @@
+﻿@model BookReviewWeb.Models.Discussion
+
+<h1>Delete Discussion</h1>
+
+<p>Are you sure you want to delete this discussion?</p>
+
+<dl class="row">
+    <dt class="col-sm-2">Question:</dt>
+    <dd class="col-sm-10">@Model.question</dd>
+    <dt class="col-sm-2">User:</dt>
+    <dd class="col-sm-10">@Model.User</dd>
+</dl>
+
+<form asp-action="DeleteQues" asp-controller="Community" method="post">
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" asp-controller="Community" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

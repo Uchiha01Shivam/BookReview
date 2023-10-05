@@ -1,2 +1,21 @@
 ﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Get references to the file input and submit button
+        var fileInput = $("#ImageFile");
+        var submitButton = $("#submitButton");
+
+        // Listen for changes in the file input
+        fileInput.change(function () {
+            if (fileInput[0].files.length > 0) {
+                // If a file is selected, enable the submit button
+                submitButton.prop("disabled", false);
+            } else {
+                // If no file is selected, disable the submit button
+                submitButton.prop("disabled", true);
+            }
+        });
+    });
+</script>
+

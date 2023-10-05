@@ -1,0 +1,115 @@
+﻿@model BookReviewWeb.Models.Discussion
+
+@{
+    ViewData["Title"] = "See More";
+}
+
+<h1>Question</h1>
+<div>
+    <h3>@Model.question</h3>
+    <p>Posted by: @Model.User</p>
+    <p>Total Likes: @Model.Likes.Sum(like => like.Like)</p>
+    <p>Total Dislikes: @Model.Likes.Sum(like => like.DisLike)</p>
+</div>
+
+<div>
+    <div>
+        <form asp-action="Like" asp-controller="Community" method="post" style="display: inline-block;">
+            <input type="hidden" name="discussionId" value="@Model.Id" />
+            <input type="hidden" name="UserName" value="@User.Identity.Name" />
+            @if(Model.Likes.Any(like=>like.UserName==User.Identity.Name && like.Like == 0))
+            {
+                <button type="submit" class="btn btn-primary">Like</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary">UnLike</button>
+            }
+          
+        </form>
+
+        <form asp-action="DisLike" asp-controller="Community" method="post" style="display: inline-block;">
+            <input type="hidden" name="discussionId" value="@Model.Id" />
+            <input type="hidden" name="UserName" value="@User.Identity.Name" />
+            @if (Model.Likes.Any(like => like.UserName == User.Identity.Name && like.DisLike == 0))
+            {
+                <button type="submit" class="btn btn-danger">DisLike</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary">UnDisLike</button>
+            }
+        </form>
+    </div>
+</div>
+
+<h2>Answers</h2>
+@if (Model.Community != null && Model.Community.Any())
+{
+    <ul>
+        @foreach (var answer in Model.Community)
+        {
+            <li>
+                <p>@answer.Answer</p>
+                <p>Posted by: @answer.UserName</p>
+                <p>Likes: @answer.AnsLikes.Sum(like => like.Likes)</p>
+                <p>Dislikes: @answer.AnsLikes.Sum(like => like.DisLikes)</p>
+
+                <form asp-action="LikeAnswer" asp-controller="Community" method="post" style="display: inline-block;">
+                    <input type="hidden" name="answerId" value="@answer.Id" />
+                    <input type="hidden" name="UserName" value="@User.Identity.Name" />
+                    @if (answer.AnsLikes.Any(like => like.UserName == User.Identity.Name && like.Likes == 1))
+                    {
+                        <button type="submit" class="btn btn-primary">Unlike</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary">Like</button>
+                    }
+                  
+                </form>
+
+                <form asp-action="DislikeAnswer" asp-controller="Community" method="post" style="display: inline-block;">
+                    <input type="hidden" name="answerId" value="@answer.Id" />
+                    <input type="hidden" name="UserName" value="@User.Identity.Name" />
+                    @if (answer.AnsLikes.Any(like => like.UserName == User.Identity.Name && like.DisLikes == 1))
+                    {
+                        <button type="submit" class="btn btn-primary">UnDislike</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-danger">DisLike</button>
+                    }
+                </form>
+                <!-- Edit Answer link -->
+                <div>
+                    @if (answer.UserName == User.Identity.Name)
+                    {
+                        <a asp-action="EditAnswer" asp-controller="Community" asp-route-id="@answer.Id" asp-route-UserName="@answer.UserName">Edit Answer</a>
+                        <a asp-action="Delete" asp-controller="Community" asp-route-id="@answer.Id" asp-route-username="@answer.UserName">Delete Answer</a>
+                    }
+              
+                </div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No answers available for this question.</p>
+}
+
+<h2>Post an Answer</h2>
+<form asp-action="CreateAnswer" asp-controller="Community" method="post">
+    <div class="form-group">
+        <input type="hidden" name="questionid" value="@Model.Id">
+        <input type="hidden" name="username" value="@User.Identity.Name">
+        <label for="answer">Answer</label>
+        <textarea class="form-control" id="answer" name="answer" rows="4" cols="50" placeholder="Your answer..." required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Answer</button>
+</form>
+
+<p>
+    <a asp-action="Index">Back to Discussions</a>
+</p>

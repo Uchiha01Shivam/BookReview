@@ -1,0 +1,68 @@
+﻿@model IEnumerable<BookReviewWeb.Models.FAQ>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FAQs</title>
+</head>
+<body>
+    <h2>FAQs</h2>
+
+    <!-- Display existing FAQs -->
+    @if (Model.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Answer</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var faq in Model)
+                {
+                    <tr>
+                        <td>@faq.question</td>
+                        <td>@faq.answer</td>
+                        <td>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <!-- Add a delete link for each FAQ -->
+                              
+                                <a href="@Url.Action("Edit", "FAQ", new { id = faq.Id })" class="btn btn-primary">Edit</a>
+                                <a href="@Url.Action("Delete", "FAQ", new { id = faq.Id })" class="btn btn-danger">Delete</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No FAQs available.</p>
+    }
+
+    @if (User.IsInRole("Admin"))
+    {
+        <h2>Create FAQ</h2>
+        <form method="post" action="Create" enctype="multipart/form-data">
+
+
+            <div class="form-group">
+                <label for="question">Question</label>
+                <input type="text" id="question" name="question" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="answer">Answer</label>
+                <input type="text" id="answer" name="answer" class="form-control">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    }
+    <!-- Form for creating new FAQs -->
+   
+</body>
+</html>

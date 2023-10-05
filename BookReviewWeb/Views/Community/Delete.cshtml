@@ -1,0 +1,25 @@
+﻿@model BookReviewWeb.Models.Community
+
+@{
+    ViewData["Title"] = "Delete Answer";
+}
+
+<h2>Delete Answer</h2>
+<h3>Are you sure you want to delete this answer?</h3>
+
+<div>
+    <h4>Answer</h4>
+    <p>@Model.Answer</p>
+</div>
+
+<div>
+    <form asp-action="DeleteAns" asp-controller="Community" method="post">
+        <input type="hidden" asp-for="Id" value="@Model.Id" />
+        <input type="hidden" asp-for="UserName" value="@Model.UserName" />
+
+        <div class="form-group">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            <a asp-action="SeeMore" asp-controller="Community" asp-route-id="@Model.QuestionId">Back to Question</a>
+        </div>
+    </form>
+</div>

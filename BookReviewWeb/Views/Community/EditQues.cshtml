@@ -1,0 +1,17 @@
+﻿@model BookReviewWeb.Models.Discussion
+
+<h1>Edit Discussion</h1>
+
+<form asp-action="Edit" asp-controller="Community" method="post">
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
+
+    <div class="form-group">
+        <label for="question">Question</label>
+        <input type="text" class="form-control" id="question" name="question" value="@Model.question" required>
+    </div>
+    <div class="form-group">
+        <label for="User">User</label>
+        <input type="text" class="form-control" id="User" name="User" value="@Model.User" readonly="readonly" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>

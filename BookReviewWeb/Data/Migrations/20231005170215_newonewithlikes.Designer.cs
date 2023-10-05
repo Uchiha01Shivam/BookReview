@@ -4,6 +4,7 @@ using BookReviewWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookReviewWeb.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231005170215_newonewithlikes")]
+    partial class newonewithlikes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,37 +24,6 @@ namespace BookReviewWeb.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BookReviewWeb.Models.AnsLike", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("DisLikes")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("IsLiked")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("Likes")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("answerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("answerId");
-
-                    b.ToTable("AnsLike");
-                });
 
             modelBuilder.Entity("BookReviewWeb.Models.Book", b =>
                 {
@@ -124,6 +96,15 @@ namespace BookReviewWeb.Data.Migrations
                     b.Property<string>("Answer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DisLikes")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsLiked")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("Likes")
+                        .HasColumnType("int");
 
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
@@ -439,17 +420,6 @@ namespace BookReviewWeb.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BookReviewWeb.Models.AnsLike", b =>
-                {
-                    b.HasOne("BookReviewWeb.Models.Community", "Community")
-                        .WithMany("AnsLikes")
-                        .HasForeignKey("answerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Community");
-                });
-
             modelBuilder.Entity("BookReviewWeb.Models.Community", b =>
                 {
                     b.HasOne("BookReviewWeb.Models.Discussion", "Discussion")
@@ -537,11 +507,6 @@ namespace BookReviewWeb.Data.Migrations
             modelBuilder.Entity("BookReviewWeb.Models.Book", b =>
                 {
                     b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("BookReviewWeb.Models.Community", b =>
-                {
-                    b.Navigation("AnsLikes");
                 });
 
             modelBuilder.Entity("BookReviewWeb.Models.Discussion", b =>

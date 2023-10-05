@@ -9,25 +9,50 @@ using BookReviewWeb.Data;
 using BookReviewWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
+using Microsoft.AspNetCore.Hosting;
 
 namespace BookReviewWeb.Controllers
 {
     public class BooksController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public BooksController(ApplicationDbContext context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public BooksController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Books
-        public async Task<IActionResult> Index()
+        // GET: Books
+        public async Task<IActionResult> Index(string searcher)
         {
-              return _context.Book != null ? 
-                          View(await _context.Book.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Book'  is null.");
+            // Retrieve all books by default
+            var books = _context.Book.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searcher))
+            {
+                // Filter books based on the search query for Title or UploaderUsername
+                books = books.Where(b => b.Title.Contains(searcher) || b.UploaderUsername.Contains(searcher)|| b.Description.Contains(searcher));
+            }
+
+            // Return the filtered list of books to the view
+            return View(await books.ToListAsync());
         }
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetSuggestions(string query)
+        //{
+        //    var suggestions = await _context.Book
+        //        .Where(b => b.Title.Contains(query) || b.UploaderUsername.Contains(query))
+        //        .Select(b => b.Title)
+        //        .ToListAsync();
+
+        //    return Json(suggestions);
+        //}
+
+
 
         // GET: Books/Details/5
         // GET: New/Details/5
@@ -62,18 +87,46 @@ namespace BookReviewWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,UploaderUsername")] Book book)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,UploaderUsername,ImageFile,Author,Publication")] Book book)
         {
             if (ModelState.IsValid)
             {
+                if (book.ImageFile != null && book.ImageFile.Length > 0)
+                {
+                    // Define the directory where you want to save the uploaded files
+                    var uploadsDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+
+                    // Ensure the directory exists; if not, create it
+                    if (!Directory.Exists(uploadsDirectory))
+                    {
+                        Directory.CreateDirectory(uploadsDirectory);
+                    }
+
+                    // Generate a unique filename for the uploaded image (e.g., using Guid)
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + book.ImageFile.FileName;
+
+                    // Define the path where the image will be saved
+                    var imagePath = Path.Combine(uploadsDirectory, uniqueFileName);
+
+                    using (var stream = new FileStream(imagePath, FileMode.Create))
+                    {
+                        await book.ImageFile.CopyToAsync(stream);
+                    }
+
+                    // Update the ImagePath property with the path to the saved image
+                    book.Imagepath = Path.Combine("uploads", uniqueFileName);
+                }
+
                 book.UploaderUsername = User.Identity.Name;
                 _context.Add(book);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            return BadRequest(ModelState);
+            return View(book);
         }
+
+
 
         // GET: Books/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -91,12 +144,55 @@ namespace BookReviewWeb.Controllers
             return View(book);
         }
 
+        public async Task<IActionResult> AddRating(int? id)
+        {
+            if (id == null || _context.Book == null)
+            {
+                return NotFound();
+            }
+
+            var book = await _context.Book.FindAsync(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+            return View(book);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddRating(Book book)
+        {
+            if (ModelState.IsValid)
+            {
+                // Calculate the Overall rating as the sum of all other properties
+                book.OverAll =
+                    (book.AuthorCredibility ?? 0) +
+                    (book.PublisherCreibility ?? 0) +
+                    (book.InGeneral ?? 0) +
+                    (book.PhysicalAppearance ?? 0) +
+                    (book.SubjectMatter ?? 0) +
+                    (book.Language ?? 0) +
+                    (book.Illustration ?? 0);
+
+                // Update the book's properties with the submitted ratings
+                _context.Update(book);
+                await _context.SaveChangesAsync();
+
+                // Redirect back to the book details page or any other appropriate page
+                return RedirectToAction("Details", new { id = book.Id });
+            }
+
+            return View(book);
+        }
+
+
         // POST: Books/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,UploaderUsername")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,UploaderUsername,ImageFile,Author,Publication")] Book book)
         {
             if (id != book.Id)
             {
@@ -107,7 +203,45 @@ namespace BookReviewWeb.Controllers
             {
                 try
                 {
+                    // Check if a new image file has been uploaded
+                    if (book.ImageFile != null && book.ImageFile.Length > 0)
+                    {
+                        // Define the directory where you want to save the uploaded files
+                        var uploadsDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+
+                        // Ensure the directory exists; if not, create it
+                        if (!Directory.Exists(uploadsDirectory))
+                        {
+                            Directory.CreateDirectory(uploadsDirectory);
+                        }
+
+                        // Generate a unique filename for the uploaded image (e.g., using Guid)
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + book.ImageFile.FileName;
+
+                        // Define the path where the image will be saved
+                        var imagePath = Path.Combine(uploadsDirectory, uniqueFileName);
+
+                        using (var stream = new FileStream(imagePath, FileMode.Create))
+                        {
+                            await book.ImageFile.CopyToAsync(stream);
+                        }
+
+                        // Update the Imagepath property with the path to the saved image
+                        book.Imagepath = Path.Combine("uploads", uniqueFileName);
+                    }
+                    else
+                    {
+                        // No new image selected, keep the previous image path
+                        var existingBook = await _context.Book.FindAsync(book.Id);
+                        book.Imagepath = existingBook.Imagepath;
+
+                        // Detach the existing entity from the context
+                        _context.Entry(existingBook).State = EntityState.Detached;
+                    }
+
+                    // Update the rest of the book properties
                     _context.Update(book);
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -125,6 +259,7 @@ namespace BookReviewWeb.Controllers
             }
             return View(book);
         }
+
 
         // GET: Books/Delete/5
         public async Task<IActionResult> Delete(int? id)
