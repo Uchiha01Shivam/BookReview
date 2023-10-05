@@ -77,6 +77,7 @@ namespace BookReviewWeb.Controllers
 
 
         // GET: Books/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();

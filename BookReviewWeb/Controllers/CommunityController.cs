@@ -1,5 +1,6 @@
 ﻿using BookReviewWeb.Data;
 using BookReviewWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -244,6 +245,7 @@ namespace BookReviewWeb.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("SeeMore", new { id = ans.Id });
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Like(int discussionId)
         {
@@ -295,7 +297,7 @@ namespace BookReviewWeb.Controllers
             // Redirect back to the discussion page or wherever you prefer
             return RedirectToAction("SeeMore", new { id = discussionId });
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> DisLike(int discussionId)
         {
@@ -349,7 +351,7 @@ namespace BookReviewWeb.Controllers
             // Redirect back to the discussion page or wherever you prefer
             return RedirectToAction("SeeMore", new { id = discussionId });
         }
-
+        [Authorize]
 
         [HttpPost]
         public async Task<IActionResult> LikeAnswer(int answerId)
@@ -402,6 +404,7 @@ namespace BookReviewWeb.Controllers
             // Redirect back to the discussion page or wherever you prefer
             return RedirectToAction("SeeMore", new { id = answer.QuestionId });
         }
+        [Authorize]
 
         [HttpPost]
         public async Task<IActionResult> DislikeAnswer(int answerId)
