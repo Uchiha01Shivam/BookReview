@@ -17,13 +17,13 @@
         <form asp-action="Like" asp-controller="Community" method="post" style="display: inline-block;">
             <input type="hidden" name="discussionId" value="@Model.Id" />
             <input type="hidden" name="UserName" value="@User.Identity.Name" />
-            @if(Model.Likes.Any(like=>like.UserName==User.Identity.Name && like.Like == 0))
+            @if(Model.Likes.Any(like=>like.UserName==User.Identity.Name && like.Like == 1))
             {
-                <button type="submit" class="btn btn-primary">Like</button>
+                <button type="submit" class="btn btn-primary">UnLike</button>
             }
             else
             {
-                <button type="submit" class="btn btn-primary">UnLike</button>
+                <button type="submit" class="btn btn-primary">Like</button>
             }
           
         </form>
@@ -31,13 +31,13 @@
         <form asp-action="DisLike" asp-controller="Community" method="post" style="display: inline-block;">
             <input type="hidden" name="discussionId" value="@Model.Id" />
             <input type="hidden" name="UserName" value="@User.Identity.Name" />
-            @if (Model.Likes.Any(like => like.UserName == User.Identity.Name && like.DisLike == 0))
+            @if (Model.Likes.Any(like => like.UserName == User.Identity.Name && like.DisLike == 1))
             {
-                <button type="submit" class="btn btn-danger">DisLike</button>
+                <button type="submit" class="btn btn-danger">UnDisLike</button>
             }
             else
             {
-                <button type="submit" class="btn btn-primary">UnDisLike</button>
+                <button type="submit" class="btn btn-primary">DisLike</button>
             }
         </form>
     </div>
