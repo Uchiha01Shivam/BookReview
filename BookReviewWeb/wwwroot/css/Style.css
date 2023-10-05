@@ -1,0 +1,21 @@
+﻿/* styles.css */
+
+#searchSuggestions {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+}
+
+    #searchSuggestions div {
+        padding: 5px;
+        cursor: pointer;
+    }
+
+        #searchSuggestions div:hover {
+            background-color: #f1f1f1;
+        }
+/* Style for the liked button */
+

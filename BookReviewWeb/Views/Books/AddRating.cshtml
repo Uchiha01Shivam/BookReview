@@ -1,0 +1,60 @@
+﻿@model BookReviewWeb.Models.Book
+
+@{
+    ViewData["Title"] = "Add Rating";
+}
+
+<h1>Add Rating</h1>
+
+<form asp-action="AddRating">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Description" value="@Model.Description" />
+    <input type="hidden" asp-for="UploaderUsername" value="@Model.UploaderUsername" />
+    <input type="hidden"  asp-for="Title" value="@Model.Title" />
+    <input type="hidden" asp-for="Imagepath" value="@Model.Imagepath" />
+    <input type="hidden" asp-for="ImageFile" value="@Model.ImageFile" />
+    <div class="form-group">
+        <label for="AuthorCredibility">Author Credibility:</label>
+        <input type="number" class="form-control" asp-for="AuthorCredibility" />
+    </div>
+
+    <div class="form-group">
+        <label for="PublisherCreibility">Publisher Credibility:</label>
+        <input type="number" class="form-control" asp-for="PublisherCreibility" />
+    </div>
+
+    <div class="form-group">
+        <label for="InGeneral">In General:</label>
+        <input type="number" class="form-control" asp-for="InGeneral" />
+    </div>
+
+    <div class="form-group">
+        <label for="PhysicalAppearance">Physical Appearance:</label>
+        <input type="number" class="form-control" asp-for="PhysicalAppearance" />
+    </div>
+
+    <div class="form-group">
+        <label for="SubjectMatter">Subject Matter:</label>
+        <input type="number" class="form-control" asp-for="SubjectMatter" />
+    </div>
+
+    <div class="form-group">
+        <label for="Language">Language:</label>
+        <input type="number" class="form-control" asp-for="Language" />
+    </div>
+
+    <div class="form-group">
+        <label for="Illustration">Illustration:</label>
+        <input type="number" class="form-control" asp-for="Illustration" />
+    </div>
+
+   
+
+    <!-- Add other properties as needed -->
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+</form>
+
+<a asp-action="Index">Back to List</a>

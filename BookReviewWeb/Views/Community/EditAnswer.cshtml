@@ -1,0 +1,23 @@
+﻿@model BookReviewWeb.Models.Community
+
+@{
+    ViewData["Title"] = "Edit Answer";
+}
+
+<h1>Edit Answer</h1>
+
+<form asp-action="UpdateAnswer" asp-controller="Community" method="post">
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
+    <input type="hidden" asp-for="UserName" value="@Model.UserName" />
+
+    <div class="form-group">
+        <label asp-for="Answer">Answer</label>
+        <textarea class="form-control" asp-for="Answer" rows="4" cols="50" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Answer</button>
+</form>
+
+<p>
+    <a asp-action="SeeMore" asp-controller="Community" asp-route-id="@Model.QuestionId">Back to Question</a>
+</p>
